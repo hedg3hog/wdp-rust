@@ -3,7 +3,7 @@ use std::fs::read_to_string;
 use std::time::Instant;
 use serde::{Deserialize, Serialize};
 use std::collections::HashSet;
-use std::ptr::hash;
+
 
 #[derive(Serialize, Deserialize,PartialEq, Clone, )]
 struct Bid {
@@ -48,7 +48,7 @@ fn wdp(bids: &Vec<Bid>) -> Vec<usize>{
     }
     return best
 }
-
+/*
 fn prune_bids(path:&Vec<usize>, list_to_check:Vec<usize>, bids:&Vec<Bid>) -> Vec<usize>{
     let mut not_sold : Vec<usize> = vec![];
     let mut sold: HashSet<u16> = HashSet::new();
@@ -64,10 +64,14 @@ fn prune_bids(path:&Vec<usize>, list_to_check:Vec<usize>, bids:&Vec<Bid>) -> Vec
     return not_sold;
 
 }
+*/
+fn prune_bids(path: &[usize], list_to_check: Vec<usize>, bids: &[Bid]) -> Vec<usize> {
+    let sold: HashSet<u16> = path.iter().flat_map(|&b| bids[b].items.iter().cloned()).collect();
+    list_to_check.into_iter().filter(|&b| sold.is_disjoint(&bids[b].items)).collect()
+}
 
 
-
-
+/*
 fn bid_sum(bids_idx: &Vec<usize>, bids : &Vec<Bid>) -> i32{
     let mut sum = 0;
     for b in bids_idx {
@@ -75,6 +79,11 @@ fn bid_sum(bids_idx: &Vec<usize>, bids : &Vec<Bid>) -> i32{
     }
     return sum
 }
+*/
+fn bid_sum(bids_idx: &[usize], bids : &[Bid]) -> i32 {
+    bids_idx.iter().map(|&b| bids[b].value).sum()
+}
+
 
 
 /*

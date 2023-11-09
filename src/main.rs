@@ -7,7 +7,7 @@ use std::ptr::hash;
 
 #[derive(Serialize, Deserialize,PartialEq, Clone, )]
 struct Bid {
-    items: HashSet<String>,
+    items: HashSet<u16>,
     value: i32
 }
 
@@ -51,7 +51,7 @@ fn wdp(bids: &Vec<Bid>) -> Vec<usize>{
 
 fn prune_bids(path:&Vec<usize>, list_to_check:Vec<usize>, bids:&Vec<Bid>) -> Vec<usize>{
     let mut not_sold : Vec<usize> = vec![];
-    let mut sold: HashSet<String> = HashSet::new();
+    let mut sold: HashSet<u16> = HashSet::new();
     for b in path{
         sold.extend(bids[*b].items.clone())
     }
@@ -96,9 +96,9 @@ fn main() {
     let mut times : Vec<f32> = vec![];
     let mut results : Vec<i32> = vec![];
     for i in 1..19{
-        let s = format!("bids/bids{:0>2}.json", i);
+        let s = format!("bids/bids{:0>2}-ID.json", i);
         let mut bids = load_bids(&s);
-        bids.sort_by(|a, b| b.items.len().cmp(&a.items.len()));
+        bids.sort_by(|a, b| b.value.cmp(&a.value));
         println!("Loaded and sorted bids{:0>2}.json", i);
         let now = Instant::now();
         let w = wdp(&bids.clone());
